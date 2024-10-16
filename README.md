@@ -1,5 +1,22 @@
 # elastic-search-lerning
 
+## environment
+
+```
+$ docker version
+Client:
+ Version:           24.0.7
+ API version:       1.43
+ Go version:        go1.21.1
+ Git commit:        24.0.7-0ubuntu2~22.04.1
+ Built:             Wed Mar 13 20:23:54 2024
+ OS/Arch:           linux/amd64
+ Context:           default
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/version": dial unix /var/run/docker.sock: connect: permission denied
+$ docker compose version
+Docker Compose version v2.29.7
+```
+
 ## how to set up
 
 ```
@@ -13,4 +30,48 @@ sudo docker compose up
 
 ```
 sudo docker exec -it elasticdump sh
+```
+
+```
+sudo docker compose down
+```
+
+## error handling
+
+
+```
+elastic-search-lerning$ id -u
+1000
+elastic-search-lerning$ sudo chown -R 1000:root elasticsearch/
+```
+
+## check cluster status
+
+```
+# default password is changeme
+$ curl -u elastic http://127.0.0.1:9200/_cat/health
+Enter host password for user 'elastic':
+1728987448 10:17:28 docker-cluster yellow 1 1 2 2 0 0 2 0 - 50.0%
+```
+
+## list index
+
+```
+curl -s http://localhost:9200/_cat/indices
+```
+
+## insert test data
+
+
+```shell:insert-data
+#!/bin/bash
+
+for i in {1..365}; do
+	d=$(date '+%Y.%m.%d' --date "$i days ago 2024-11-01")
+	index="$d"
+	#echo $index
+	curl -u elastic:changeme -X PUT "localhost:9200/$index/tweet/1?op_type=create&pretty" -H 'Content-Type: application/json' -d '{"test": "test"}'
+done
+
+# $ curl -s -u elastic:changeme http://localhost:9200/_cat/indices | sort -u
 ```
