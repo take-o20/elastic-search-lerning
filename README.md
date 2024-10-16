@@ -69,9 +69,6 @@ curl -s http://localhost:9200/_cat/indices
 for i in {1..365}; do
 	d=$(date '+%Y.%m.%d' --date "$i days ago 2024-11-01")
 	index="$d"
-	#echo $index
-	curl -u elastic:changeme -X PUT "localhost:9200/$index/tweet/1?op_type=create&pretty" -H 'Content-Type: application/json' -d '{"test": "test"}'
+	curl -X PUT "localhost:9200/$index/tweet/1?op_type=create&pretty" -H 'Content-Type: application/json' -d '{"test": "test"}'
 done
-
-# $ curl -s -u elastic:changeme http://localhost:9200/_cat/indices | sort -u
 ```
