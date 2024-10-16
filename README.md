@@ -63,7 +63,7 @@ curl -s http://localhost:9200/_cat/indices
 ## insert test data
 
 
-```shell:insert-data
+```shell:insert-index.sh
 #!/bin/bash
 
 for i in {1..365}; do
@@ -71,4 +71,39 @@ for i in {1..365}; do
 	index="$d"
 	curl -X PUT "localhost:9200/$index/tweet/1?op_type=create&pretty" -H 'Content-Type: application/json' -d '{"test": "test"}'
 done
+```
+
+## close index
+
+```shell:close-index.sh
+#!/bin/bash
+set -eu
+
+INDEXES=()
+
+## close対象のindexを作成
+for i in {30..365}; do
+	d=$(date '+%Y.%m.%d' --date "$i days ago 2024-11-01")
+	index="$d"
+    INDEXES+=($index)
+done
+
+date
+for index in ${INDEXES[@]}; do
+    echo curl -X POST "http://localhost:9200/${index}/_close?pretty"
+    curl -X POST http://localhost:9200/${index}/_close?pretty
+done
+date
+```
+
+## open index
+
+```sh
+curl -X POST "localhost:9200/my_index/_open?pretty"
+```
+
+## delete index
+
+```sh
+curl -X DELETE "http://localhost:9200/${index}"
 ```
